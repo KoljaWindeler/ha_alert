@@ -1,11 +1,51 @@
 """ A component which allows you to parse an RSS feed into a sensor """
 from .const import *
+from homeassistant.helpers.typing import (
+    ConfigType,
+    DiscoveryInfoType,
+    HomeAssistantType,
+)
+from datetime import timedelta
+import logging
+import re
+from typing import Any, Callable, Dict, Optional
+from homeassistant import config_entries, core
+from homeassistant.components.sensor import PLATFORM_SCHEMA
+from homeassistant.const import (
+    ATTR_NAME,
+    CONF_ACCESS_TOKEN,
+    CONF_NAME,
+    CONF_PATH,
+    CONF_URL,
+)
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
+import homeassistant.helpers.config_validation as cv
+from homeassistant.helpers.entity import Entity
+from homeassistant import config_entries, core
+
 _LOGGER = logging.getLogger(__name__)
 
 
+async def async_setup_entry(
+    hass: core.HomeAssistant,
+    config_entry: config_entries.ConfigEntry,
+    async_add_entities,
+):
+    """Setup sensors from a config entry created in the integrations UI."""
+    config = hass.data[DOMAIN][config_entry.entry_id]
+    # Update our config to include new repos and remove those that have been removed.
+    async_add_entities([ha_alert(hass)], update_before_add=True)
 
 
 
+async def async_setup_platform(
+    hass: HomeAssistantType,
+    config: ConfigType,
+    async_add_entities: Callable,
+    discovery_info: Optional[DiscoveryInfoType] = None,
+) -> None:
+    """Set up the sensor platform."""
+    async_add_entities([ha_alert(hass)], update_before_add=True)
 
 class ha_alert(Entity):
     def __init__(self, hass):
@@ -109,7 +149,7 @@ class ha_alert(Entity):
             'entries': self._entries
         }
 
-    async def _async_initialize_from_database(self,hass):
+    async def _async_initialize_from_database(self,hass=None):
         """Initialize the list of states from the database."""
         with session_scope(hass=self.hass) as session:
             query = session.query(States).filter(States.entity_id == 'sensor.'+self._name)
