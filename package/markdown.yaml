@@ -1,0 +1,27 @@
+      - type: conditional
+        conditions:
+          - entity: sensor.ha_alert
+            state: 'on'
+        card:
+          type: vertical-stack
+          cards:
+            - type: markdown
+              content: >-
+                # New Alert:
+                {{states['sensor.ha_alert'].attributes.entries[0]['title']}}
+
+                [Click here for more
+                details]({{states['sensor.ha_alert'].attributes.entries[0]['link']}})
+              style: |
+                ha-card {
+                  background-color: darkred;
+                }
+            - type: button
+              tap_action:
+                action: call-service
+                service: ha_alert.mark_read
+                service_data:
+                  entity_id: sensor.ha_alert
+              entity: sensor.ha_alert
+              name: Mark alert read
+              show_icon: false

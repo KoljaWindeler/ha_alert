@@ -1,0 +1,6 @@
+mark_read:
+  description: marks the newest alert as read.
+  fields:
+    entity_id:
+      description: Name(s) of the Sensor.
+      example: "sensor.ha_alert"

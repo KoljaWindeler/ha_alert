@@ -1,0 +1,8 @@
+{
+  "domain": "ha_alert",
+  "name": "ha_alert",
+  "documentation": "https://github.com/KoljaWindeler/ha_alert/blob/master/README.md",
+  "dependencies": [],
+  "codeowners": ["@iantrich","@KoljaWindeler"],
+  "requirements": ["feedparser==6.0.0b3"]
+}
